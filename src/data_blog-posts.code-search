@@ -1,9 +1,0 @@
-# Query: data/blog-posts
-# ContextLines: 1
-
-1 result - 1 file
-
-src/content.config.js:
-  4  const posts = defineCollection({
-  5: 	loader: glob({ pattern: "*.md", base: "./src/content/posts" }),
-  6  	schema: z.object({

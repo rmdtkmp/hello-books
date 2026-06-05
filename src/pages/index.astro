@@ -1,60 +1,84 @@
 ---
-import { getCollection } from 'astro:content'
-import BaseLayout from '../layouts/BaseLayout.astro'; 
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostPreview from "@/components/blog/PostPreview.astro";
+import Note from "@/components/note/Note.astro";
+import SocialList from "@/components/SocialList.astro";
+import { getAllPosts } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+import { collectionDateSort } from "@/utils/date";
 
-const title = 'Hello Books | Home'; 
-const description = 'Latest curated summaries and analysis.';
-const permalink = Astro.url.href; 
+// Posts
+const MAX_POSTS = 10;
+const allPosts = await getAllPosts();
+const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
+const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
 
-let allPosts = await getCollection('posts')
-allPosts = allPosts.sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf());
+// Pinned Posts, set to a max of 3;
+const MAX_PINNED_POSTS = 3;
+const pinnedPosts = allPostsByDate
+	.values()
+	.filter((p) => p.data.pinned)
+	.take(MAX_PINNED_POSTS)
+	.toArray();
+
+// Notes, set to a max of 5
+const MAX_NOTES = 5;
+const allNotes = await getCollection("note");
+const latestNotes = allNotes
+	.sort(collectionDateSort)
+	.slice(0, MAX_NOTES) as CollectionEntry<"note">[];
 ---
 
-<BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <div class="container">
-    {allPosts.map((post, index) => {
-      const href = `/blog/${post.data.slug}`;
-      
-      // Safely format the strict date into readable text (e.g., "Jun 4, 2026")
-      const formattedDate = new Date(post.data.publishDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-
-      return (
-        <div>
-          { index !== 0 && <hr /> }
-          <div class="post-item">
-            <h2>
-              <a href={href}>{post.data.title}</a>
-            </h2>
-            <p>{post.data.description}</p>
-            <div class="post-item-footer">
-              <span class="post-item-date">— {formattedDate}</span>
-            </div>
-          </div>
-        </div>
-      )
-    })}
-  </div>
-</BaseLayout>
-
-<style>
-  h2,
-  .post-item-footer {
-    font-family: var(--font-family-sans);
-    font-weight: 700;
-  }
-
-  .post-item-date {
-    color: var(--text-secondary);
-    text-align: left;
-    text-transform: uppercase;
-    margin-right: 16px;
-  }
-
-  hr {
-    margin: 60px auto;
-  }
-</style>
+<PageLayout meta={{ title: "Home" }}>
+	<section>
+		<h1 class="title mb-12">Hello World!</h1>
+		<p class="mb-4">
+			Hi, I’m a theme for Astro, a simple starter that you can use to create your website or blog.
+			If you want to know more about how you can customise me, add more posts, and make it your own,
+			click on the GitHub icon link below and it will take you to my repo.
+		</p>
+		<SocialList />
+	</section>
+	{
+		pinnedPosts.length > 0 && (
+			<section class="mt-16">
+				<h2 class="title mb-6 text-xl">Pinned Posts</h2>
+				<ul class="space-y-4" role="list">
+					{pinnedPosts.map((p) => (
+						<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
+							<PostPreview post={p} />
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+	<section class="mt-16">
+		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">Posts</a></h2>
+		<ul class="space-y-4" role="list">
+			{
+				latestPosts.map((p) => (
+					<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
+						<PostPreview post={p} />
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	{
+		latestNotes.length > 0 && (
+			<section class="mt-16">
+				<h2 class="title text-accent mb-6 text-xl">
+					<a href="/notes/">Notes</a>
+				</h2>
+				<ul class="space-y-6" role="list">
+					{latestNotes.map((note) => (
+						<li>
+							<Note note={note} as="h3" isPreview />
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</PageLayout>
