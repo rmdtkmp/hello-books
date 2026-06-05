@@ -9,8 +9,8 @@ import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const MAX_POSTS_PER_PAGE = 10;
-	const MAX_TAGS = 7;
+	const MAX_POSTS_PER_PAGE = 22;
+	const MAX_TAGS = 33;
 	const MAX_PINNED_POSTS = 3;
 	const allPosts = await getAllPosts();
 	const allPostsByDate = allPosts.sort(collectionDateSort);
@@ -35,7 +35,7 @@ interface Props {
 const { page, uniqueTags, pinnedPosts } = Astro.props;
 
 const meta = {
-	description: "Read my collection of posts and the things that interest me",
+	description: "Where reading meets technology — sharing insights that connect minds worldwide. A passionate reader transforming book insights into shared experiences through a Progressive Web App. Discover summaries, reflections, and a global community inspired by the power of words.",
 	title: "Posts",
 };
 
@@ -60,7 +60,7 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 
 <PageLayout meta={meta}>
 	<div class="mb-12 flex items-center gap-3">
-		<h1 class="title">Posts</h1>
+		<h2 class="title">Posts</h2>
 		<a class="text-accent" href="/rss.xml" target="_blank">
 			<span class="sr-only">RSS feed</span>
 			<Icon aria-hidden="true" class="h-6 w-6" focusable="false" name="mdi:rss" />
@@ -71,7 +71,7 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 			{
 				pinnedPosts.length > 0 && (
 					<section class="mb-16">
-						<h2 class="title mb-6 text-xl">Pinned Posts</h2>
+						<h2 class="title mb-6 text-xl">Pinned</h2>
 						<ul class="space-y-4" role="list">
 							{pinnedPosts.map((p) => (
 								<li class="grid gap-1 sm:grid-cols-[auto_1fr]">

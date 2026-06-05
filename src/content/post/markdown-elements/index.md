@@ -1,10 +1,10 @@
 ---
 title: "A post of Markdown elements"
 description: "This post is for testing and listing a number of different markdown elements"
-publishDate: "22 Feb 2023"
-updatedDate: 22 Jan 2024
+publishDate: "31 Dec 1999"
+updatedDate: 01 Jan 2000
 tags: ["test", "markdown"]
-pinned: true
+pinned: false
 ---
 
 ## This is a H2 Heading
